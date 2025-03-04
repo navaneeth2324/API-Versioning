@@ -2,26 +2,26 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API_Versioning.Controllers
+namespace API_Versioning.V2.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v2/[controller]")]
     [ApiController]
     public class ItemsController : ControllerBase
     {
         private static List<Item> items = new List<Item>
         {
-            new Item { Id = 1, Name = "Item1", Description = "Description1" },
-            new Item { Id = 2, Name = "Item2", Description = "Description2" }
+            new Item { Id = 1, Name = "Item1", Description = "Updated Description1" },
+            new Item { Id = 2, Name = "Item2", Description = "Updated Description2" }
         };
 
-        // GET: api/items
+        // GET: api/v2/items
         [HttpGet]
         public ActionResult<IEnumerable<Item>> GetItems()
         {
-            return items;
+            return items.Select(i => new Item { Id = i.Id, Name = i.Name, Description = "v2: " + i.Description }).ToList();
         }
 
-        // GET: api/items/1
+        // GET: api/v2/items/1
         [HttpGet("{id}")]
         public ActionResult<Item> GetItem(int id)
         {
@@ -30,10 +30,11 @@ namespace API_Versioning.Controllers
             {
                 return NotFound();
             }
+            item.Description = "v2: " + item.Description;
             return item;
         }
 
-        // POST: api/items
+        // POST: api/v2/items
         [HttpPost]
         public ActionResult<Item> PostItem(Item item)
         {
@@ -42,7 +43,7 @@ namespace API_Versioning.Controllers
             return CreatedAtAction(nameof(GetItem), new { id = item.Id }, item);
         }
 
-        // PUT: api/items/1
+        // PUT: api/v2/items/1
         [HttpPut("{id}")]
         public IActionResult PutItem(int id, Item item)
         {
@@ -53,12 +54,12 @@ namespace API_Versioning.Controllers
             }
 
             existingItem.Name = item.Name;
-            existingItem.Description = item.Description;
+            existingItem.Description = "v2: " + item.Description;
 
             return NoContent();
         }
 
-        // DELETE: api/items/1
+        // DELETE: api/v2/items/1
         [HttpDelete("{id}")]
         public IActionResult DeleteItem(int id)
         {
@@ -73,4 +74,5 @@ namespace API_Versioning.Controllers
         }
     }
 }
+
 
